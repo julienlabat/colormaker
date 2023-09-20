@@ -24,7 +24,7 @@ const presets = {
 
 function setup() {
 
-  randomSeed(1344324875436)
+  // randomSeed(1344324855)
   
   S = min(windowHeight / R, windowWidth)
   createCanvas(S, S*R)
