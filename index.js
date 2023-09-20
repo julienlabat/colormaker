@@ -5,8 +5,7 @@ const presets = {
   baseRanges: {
     l: [50, 70],
     c: [30, 50]
-  },
-  harmonyName: [['Tetradic', 1]]
+  }
 }
 
 const numColors = 7 // palette size
