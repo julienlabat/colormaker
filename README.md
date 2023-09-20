@@ -43,6 +43,7 @@ const presets = {
     ['Split_complementary', 1],
     ['Triadic', 1],
     ['Tetradic', 1],
+    ['Square', 1],
     ['Big_mess', 1]
   ],
   tonesName: [ // exhaustive list

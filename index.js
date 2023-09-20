@@ -1,26 +1,29 @@
+
+// ColorMaker presets (see template in colormaker.js)
+
+const presets = {
+  baseRanges: {
+    l: [50, 70],
+    c: [30, 50]
+  },
+  harmonyName: [['Tetradic', 1]]
+}
+
+const numColors = 7 // palette size
+
+
+// P5.js sketch -----------------------------
+
 const M = .05,
       R = .8
 
-let S,
-    cm,
-    numColors = 7,
-    narrow = numColors > 10,
-    infos,
+let S, cm, narrow, infos,
     lPal = [],
     cPal = [],
     hPal = [],
     lPalHex = [],
     cPalHex = [],
     hPalHex = []
-
-// ColorMaker presets (see template in colormaker.js)
-const presets = {
-  baseRanges: {
-    l: [50, 70],
-    c: [30, 50]
-  }
-}
-    
 
 function setup() {
 
@@ -30,9 +33,13 @@ function setup() {
   createCanvas(S, S*R)
   noLoop()
 
+  // Initiate ColorMaker
   cm = new ColorMaker(presets)
+  // Create new palette
   cm.newPalette(numColors)
 
+  // Create sorted palettes for display
+  narrow = numColors > 10
   lPal = sortPal('l', 'lch')
   cPal = sortPal('c', 'lch')
   hPal = sortPal('h', 'lch')
@@ -40,6 +47,7 @@ function setup() {
   cPalHex = sortPal('c', 'rgb')
   hPalHex = sortPal('h', 'rgb')
 
+  // Store some infos on cm instance to print on canvas
   infos = {
     'Palette Size': `${numColors} colors`,
     'Harmony' : cm.harmonyName.replaceAll('_', ' '),
@@ -56,7 +64,7 @@ function draw() {
   push()
   scale(S)  
 
-  // Top palette display
+  // Top palettes display
   let w = (1 - M*2) / cm.palette.length,
       h = .1
   for (let i = 0; i < numColors; i++) {
@@ -84,7 +92,7 @@ function draw() {
 
   }
 
-  // Hue wheel
+  // Color wheels
   drawHueLightnessWheel()
   drawHueChromaWheel()
 
@@ -103,6 +111,7 @@ function draw() {
 }
 
 function getTextCol(colL) {
+  // Returns a grey color with opposite lightness to colL : int
   return cm.formatHex({
     l: (colL + 50) % 100,
     c: 0,
@@ -112,8 +121,8 @@ function getTextCol(colL) {
 
 function sortPal(val, mode) { 
   // Returns a sorted version of cm.palette
-  // val : string = 'l', 'c' or 'h' 
-  // mode : str 'lch' or 'rgb 
+  // val : string = 'l', 'c' or 'h' (which value to sort by)
+  // mode : str 'lch' or 'rgb' (output)
   let res = [...cm.palette].sort((a, b) => a[val] - b[val])
   res.forEach((lch, i) => {
     if (mode === "lch") res[i] = lch
