@@ -1,5 +1,5 @@
 # ColorMaker
-Funky color palette generator using LCH color space (but only under the hood if you want it to). Works only with [p5.js](http://p5js.org) for now.
+Funky color palette generator using LCH color space. Works only with [p5.js](http://p5js.org) for now.
 
 ## How it works
 When initiated, the ColorMaker picks at random:
@@ -16,14 +16,16 @@ It then creates colors by:
 
 ## Usage
 - Instantiate with `new ColorMaker(presets)`
-- Generate a new palette with the `newPalette(n)` method, where `n` is an integer number of colors.
-- The class stores palettes in two formats, each in their own array : **LCH objects** and **hexadecimal RGB strings**
+- Generate a new palette with the `newPalette(n)` method, where `n` is an integer number of colors. The class stores colors in a `palette` array in LCH format : `{ l: 100, c: 100, h: 360 }`
+- Replace p5.js `fill()` and `stroke()` methods with `ColorMaker.fill()` and `ColorMaker.stroke()`. Both function take an LCH object as single argument.
 
 Example :
 ```js
-let cm = new ColorMaker({});  // empty object will initiate with default settings
-cm.newPalette(7);             // create a new palette of 7 colors
-let palette = cm.paletteHex   // retrieve palette as an array of hex codes ["#FFFFFF",...]
+const cm = new ColorMaker({});  // empty object will initiate with default settings
+cm.newPalette(7);             // create a new palette with 7 colors
+let palette = cm.palette;   // retrieve palette array
+cm.fill(palette[0]);
+circle(200, 200, 100);
 ```
 
 ## Presets
@@ -36,17 +38,17 @@ const presets = {
   // Set here harmonies and tones to pick from.
   // Second value is the weight for random picking
 
-  harmonyName: [ // exhaustive list
+  harmonyName: [ // exhaustive list (with default weights)
     ['Uniform', 1], 
-    ['Analogous', 1], 
-    ['Complementary', 1],
-    ['Split_complementary', 1],
-    ['Triadic', 1],
-    ['Tetradic', 1],
-    ['Square', 1],
-    ['Big_mess', 1]
+    ['Analogous', 2], 
+    ['Complementary', 4],
+    ['Split_complementary', 6],
+    ['Triadic', 4],
+    ['Tetradic', 4],
+    ['Square', 4],
+    ['Big_mess', 8]
   ],
-  tonesName: [ // exhaustive list
+  tonesName: [ // exhaustive list (with default weights)
     ['Uniform', 1],
     ['Low_contrast', 1],
     ['Medium_contrast', 1],
@@ -85,5 +87,5 @@ const presets = {
     c: 0,
     h: 0
   }
-}
+};
 ```

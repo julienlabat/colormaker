@@ -20,15 +20,6 @@ let S, cm, narrow, infos,
     cPal = [],
     hPal = []
 
-// Overrirde for p5 fill and stroke methods
-p3fill =lch=> {
-  fill('none')
-  drawingContext.fillStyle = `lch(${lch.l} ${lch.c} ${lch.h} / 1)`
-}
-p3stroke =lch=> {
-  stroke('none')
-  drawingContext.strokeStyle = `lch(${lch.l} ${lch.c} ${lch.h} / 1)`
-}
 
 function setup() {
 
@@ -73,10 +64,10 @@ function draw() {
     let x = M + i * w,
         lch = cm.palette[i]
     // Big blocks
-    p3fill(lch)
+    cm.fill(lch)
     rect(x, M, w, h)
     // Legend text
-    p3fill(getTextCol(lch.l))
+    cm.fill(getTextCol(lch.l))
     textSize(.01)
     if (narrow) {
       text(`${~~(lch.l)}-${~~(lch.c)}-${~~(lch.h)}`, x + .01, M + h - .01)
@@ -131,10 +122,10 @@ function sortPal(val) {
 
 function drawSortedPalette(i, x, w, h, by, lchPal, offset=1) {
   // by: str = 'l', 'c' or 'h'
-  p3fill(lchPal[i])
+  cm.fill(lchPal[i])
   rect(x, M+h+(h/3*(offset-1))+.01, w, h/3)
   // Legend text
-  p3fill(getTextCol(lchPal[i].l))
+  cm.fill(getTextCol(lchPal[i].l))
   text(`${~~(lchPal[i][by])}`, x + .01, M + h + h/3 * offset)
   if (i === 0) {
     fill('black')
@@ -160,7 +151,7 @@ function drawHueLightnessWheel() {
       let r = (.2 / lightnessSteps) * j
       let col = { l: map(j, 0, lightnessSteps, 0, 100), c: 80, h: degrees(i) }
       
-      p3stroke(col)
+      cm.stroke(col)
       let x2 = x + cos(i) * r
       let y2 = y + sin(i) * r
       line(lastx2, lasty2, x2, y2)
@@ -176,11 +167,11 @@ function drawHueLightnessWheel() {
       let r = map(col.l, 0, 100, .025, .175)
       let x3 = x + cos(angle) * r
       let y3 = y + sin(angle) * r
-      p3stroke({l:40, c:0, h:0})
+      cm.stroke({l:40, c:0, h:0})
       noFill()
       circle(x, y, r*2)
       
-      p3fill(hPal[i])
+      cm.fill(hPal[i])
       circle(x3, y3, .02)
     })
 }
@@ -200,7 +191,7 @@ function drawHueChromaWheel() {
     let lasty2 = y
     for (let j = 0; j < lightnessSteps + 1; j++) {
       let col = { l: 70, c: map(j, 0, lightnessSteps, 0, 100), h: degrees(i) }
-      p3stroke(col)
+      cm.stroke(col)
       let x2 = x + cos(i) * (.2 / lightnessSteps) * j
       let y2 = y + sin(i) * (.2 / lightnessSteps) * j
       line(lastx2, lasty2, x2, y2)
@@ -216,10 +207,10 @@ function drawHueChromaWheel() {
       let r = map(col.c, 0, 100, .025, .175)
       let x3 = x + cos(angle) * r
       let y3 = y + sin(angle) * r
-      p3stroke({l:30, c:0, h:0})
+      cm.stroke({l:30, c:0, h:0})
       noFill()
       circle(x, y, r*2)
-      p3fill(hPal[i])
+      cm.fill(hPal[i])
       circle(x3, y3, .02)
     })
 }
