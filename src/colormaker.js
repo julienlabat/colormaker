@@ -220,7 +220,6 @@ class ColorMaker {
     // Returns a modified color according to args (in lch format)
     // lowercase arg adds to value : { l: 20 } will add 20 to original l
     // uppercase arg sets a new value : { L: 20 } will set l to 20
-    
     if (args.l) lch.l = dontCycle ? Math.abs(args.l + lch.l) : Math.abs(100 + args.l + lch.l) % 100
     if (args.c) lch.c = dontCycle ? Math.abs(args.c + lch.c) : Math.abs(100 + args.c + lch.c) % 100
     if (args.h) lch.h = dontCycle ? Math.abs(args.h + lch.h) : Math.abs(360 + args.h + lch.h) % 360
