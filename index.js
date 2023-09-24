@@ -23,7 +23,7 @@ let S, cm, narrow, infos,
 
 function setup() {
 
-  // randomSeed(1344324855)
+  randomSeed(1344324855)
   
   S = min(windowHeight / R, windowWidth)
   createCanvas(S, S*R)
@@ -62,7 +62,7 @@ function draw() {
       h = .1
   for (let i = 0; i < numColors; i++) {
     let x = M + i * w,
-        lch = cm.palette[i]
+    lch = cm.palette[i]
     // Big blocks
     cm.fill(lch)
     rect(x, M, w, h)
@@ -85,11 +85,11 @@ function draw() {
   }
 
   // Color wheels
-  drawHueLightnessWheel()
-  drawHueChromaWheel()
+  drawWheel('lightness')
+  drawWheel('chroma')
 
   // Palette infos at bottom
-  cm.fill({l:0,c:0,h:0})
+  cm.fill({ l: 0, c: 0, h: 0 })
   noStroke()
   let info = ""
   for ([key, val] of Object.entries(infos)) {
@@ -114,7 +114,6 @@ function getTextCol(colL) {
 function sortPal(val) { 
   // Returns a sorted version of cm.palette
   // val : string = 'l', 'c' or 'h' (which value to sort by)
-  // mode : str 'lch' or 'rgb' (output)
   let res = [...cm.palette].sort((a, b) => a[val] - b[val])
   res.forEach((lch, i) => res[i] = lch)
   return res
@@ -133,12 +132,12 @@ function drawSortedPalette(i, x, w, h, by, lchPal, offset=1) {
   }
 }
 
-function drawHueLightnessWheel() {
-  
-  let x = .25
+function drawWheel(type) {
+  let isChroma = type === 'chroma'
+  let x = isChroma ? .75 : .25
   let y = .5
   let def = radians(.3)
-  let lightnessSteps = 60
+  let steps = 60
   noFill()
   strokeWeight(.001)
   let step = 0
@@ -147,10 +146,11 @@ function drawHueLightnessWheel() {
     step++
     let lastx2 = x
     let lasty2 = y
-    for (let j = 0; j < lightnessSteps + 1; j++) {
-      let r = (.2 / lightnessSteps) * j
-      let col = { l: map(j, 0, lightnessSteps, 0, 100), c: 80, h: degrees(i) }
-      
+    for (let j = 0; j < steps + 1; j++) {
+      let r = (.2 / steps) * j
+      let col = isChroma ? 
+        { l: 70, c: map(j, 0, steps, 0, 100), h: degrees(i) } :
+        { l: map(j, 0, steps, 0, 100), c: 90, h: degrees(i) }
       cm.stroke(col)
       let x2 = x + cos(i) * r
       let y2 = y + sin(i) * r
@@ -159,64 +159,20 @@ function drawHueLightnessWheel() {
       lasty2 = y2
     }
   }
+  // Draw concentric circles
+  hPal.forEach(col => {
+    let r = map(col.l, 0, 100, .025, .175)
+    cm.stroke({l:30, c:0, h:0})
+    noFill()
+    circle(x, y, r*2)
+  })
   // Draw points
-  [...cm.palette]
-    .sort((a, b) => a.h - b.h)
-    .forEach((col, i) => {
-      let angle = radians(col.h)
-      let r = map(col.l, 0, 100, .025, .175)
-      let x3 = x + cos(angle) * r
-      let y3 = y + sin(angle) * r
-      cm.stroke({l:40, c:0, h:0})
-      noFill()
-      circle(x, y, r*2)
-      
-      cm.fill(hPal[i])
-      circle(x3, y3, .02)
-    })
-}
-
-function drawHueChromaWheel() {
-  let x = .75
-  let y = .5
-  let def = radians(.2)//.2
-  let lightnessSteps = 60
-  noFill()
-  strokeWeight(.001)
-  let step = 0
-  // Draw background gradient
-  for (let i = 0; i < TAU; i += def) {
-    step++
-    let lastx2 = x
-    let lasty2 = y
-    for (let j = 0; j < lightnessSteps + 1; j++) {
-      let col = { l: 70, c: map(j, 0, lightnessSteps, 0, 100), h: degrees(i) }
-      cm.stroke(col)
-      let x2 = x + cos(i) * (.2 / lightnessSteps) * j
-      let y2 = y + sin(i) * (.2 / lightnessSteps) * j
-      line(lastx2, lasty2, x2, y2)
-      lastx2 = x2
-      lasty2 = y2
-    }
-  }
-  // Draw points
-  [...cm.palette]
-    .sort((a, b) => a.h - b.h)
-    .forEach((col, i) => {
-      let angle = radians(col.h)
-      let r = map(col.c, 0, 100, .025, .175)
-      let x3 = x + cos(angle) * r
-      let y3 = y + sin(angle) * r
-      cm.stroke({l:30, c:0, h:0})
-      noFill()
-      circle(x, y, r*2)
-      cm.fill(hPal[i])
-      circle(x3, y3, .02)
-    })
-}
-
-function windowResized() {
-  S = min(windowHeight / R, windowWidth)
-  resizeCanvas(S, S*R)
-  draw()
+  hPal.forEach(col => {
+    let r = map(col.l, 0, 100, .025, .175)
+    let angle = radians(col.h)
+    let x3 = x + cos(angle) * r
+    let y3 = y + sin(angle) * r
+    cm.fill(col)
+    circle(x3, y3, .02)
+  })
 }
