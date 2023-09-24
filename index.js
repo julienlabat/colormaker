@@ -10,7 +10,6 @@ const presets = {
 
 const numColors = 7 // palette size
 
-
 // P5.js sketch -----------------------------
 
 const M = .05,
@@ -19,10 +18,17 @@ const M = .05,
 let S, cm, narrow, infos,
     lPal = [],
     cPal = [],
-    hPal = [],
-    lPalHex = [],
-    cPalHex = [],
-    hPalHex = []
+    hPal = []
+
+// Overrirde for p5 fill and stroke methods
+p3fill =lch=> {
+  fill('none')
+  drawingContext.fillStyle = `lch(${lch.l} ${lch.c} ${lch.h} / 1)`
+}
+p3stroke =lch=> {
+  stroke('none')
+  drawingContext.strokeStyle = `lch(${lch.l} ${lch.c} ${lch.h} / 1)`
+}
 
 function setup() {
 
@@ -42,9 +48,6 @@ function setup() {
   lPal = sortPal('l', 'lch')
   cPal = sortPal('c', 'lch')
   hPal = sortPal('h', 'lch')
-  lPalHex = sortPal('l', 'rgb')
-  cPalHex = sortPal('c', 'rgb')
-  hPalHex = sortPal('h', 'rgb')
 
   // Store some infos on cm instance to print on canvas
   infos = {
@@ -68,13 +71,12 @@ function draw() {
       h = .1
   for (let i = 0; i < numColors; i++) {
     let x = M + i * w,
-        hex = cm.paletteHex[i],
         lch = cm.palette[i]
     // Big blocks
-    fill(hex)
+    p3fill(lch)
     rect(x, M, w, h)
     // Legend text
-    fill(getTextCol(lch.l))
+    p3fill(getTextCol(lch.l))
     textSize(.01)
     if (narrow) {
       text(`${~~(lch.l)}-${~~(lch.c)}-${~~(lch.h)}`, x + .01, M + h - .01)
@@ -83,11 +85,11 @@ function draw() {
     }
 
     // Sorted by Lightness
-    drawSortedPalette(i, x, w, h, 'l', lPal, lPalHex, 1)
+    drawSortedPalette(i, x, w, h, 'l', lPal, 1)
     // Sorted by Chroma
-    drawSortedPalette(i, x, w, h, 'c', cPal, cPalHex, 2)
+    drawSortedPalette(i, x, w, h, 'c', cPal, 2)
     // Sorted by Hue
-    drawSortedPalette(i, x, w, h, 'h', hPal, hPalHex, 3)
+    drawSortedPalette(i, x, w, h, 'h', hPal, 3)
 
   }
 
@@ -111,31 +113,28 @@ function draw() {
 
 function getTextCol(colL) {
   // Returns a grey color with opposite lightness to colL : int
-  return cm.formatHex({
+  return {
     l: (colL + 50) % 100,
     c: 0,
     h: 0
-  })
+  }
 }
 
-function sortPal(val, mode) { 
+function sortPal(val) { 
   // Returns a sorted version of cm.palette
   // val : string = 'l', 'c' or 'h' (which value to sort by)
   // mode : str 'lch' or 'rgb' (output)
   let res = [...cm.palette].sort((a, b) => a[val] - b[val])
-  res.forEach((lch, i) => {
-    if (mode === "lch") res[i] = lch
-    if (mode === "rgb") res[i] = cm.formatHex(lch)
-  })
+  res.forEach((lch, i) => res[i] = lch)
   return res
 }
 
-function drawSortedPalette(i, x, w, h, by, lchPal, hexPal, offset=1) {
+function drawSortedPalette(i, x, w, h, by, lchPal, offset=1) {
   // by: str = 'l', 'c' or 'h'
-  fill(hexPal[i])
+  p3fill(lchPal[i])
   rect(x, M+h+(h/3*(offset-1))+.01, w, h/3)
   // Legend text
-  fill(getTextCol(lchPal[i].l))
+  p3fill(getTextCol(lchPal[i].l))
   text(`${~~(lchPal[i][by])}`, x + .01, M + h + h/3 * offset)
   if (i === 0) {
     fill('black')
@@ -144,6 +143,7 @@ function drawSortedPalette(i, x, w, h, by, lchPal, hexPal, offset=1) {
 }
 
 function drawHueLightnessWheel() {
+  
   let x = .25
   let y = .5
   let def = radians(.3)
@@ -158,8 +158,9 @@ function drawHueLightnessWheel() {
     let lasty2 = y
     for (let j = 0; j < lightnessSteps + 1; j++) {
       let r = (.2 / lightnessSteps) * j
-      let col = cm.formatHex({ l: map(j, 0, lightnessSteps, 0, 100), c: 80, h: degrees(i) })
-      stroke(col)
+      let col = { l: map(j, 0, lightnessSteps, 0, 100), c: 80, h: degrees(i) }
+      
+      p3stroke(col)
       let x2 = x + cos(i) * r
       let y2 = y + sin(i) * r
       line(lastx2, lasty2, x2, y2)
@@ -175,10 +176,11 @@ function drawHueLightnessWheel() {
       let r = map(col.l, 0, 100, .025, .175)
       let x3 = x + cos(angle) * r
       let y3 = y + sin(angle) * r
-      stroke(60)
+      p3stroke({l:40, c:0, h:0})
       noFill()
       circle(x, y, r*2)
-      fill(hPalHex[i])
+      
+      p3fill(hPal[i])
       circle(x3, y3, .02)
     })
 }
@@ -197,8 +199,8 @@ function drawHueChromaWheel() {
     let lastx2 = x
     let lasty2 = y
     for (let j = 0; j < lightnessSteps + 1; j++) {
-      let col = cm.formatHex({ l: 70, c: map(j, 0, lightnessSteps, 0, 100), h: degrees(i) })
-      stroke(col)
+      let col = { l: 70, c: map(j, 0, lightnessSteps, 0, 100), h: degrees(i) }
+      p3stroke(col)
       let x2 = x + cos(i) * (.2 / lightnessSteps) * j
       let y2 = y + sin(i) * (.2 / lightnessSteps) * j
       line(lastx2, lasty2, x2, y2)
@@ -214,10 +216,10 @@ function drawHueChromaWheel() {
       let r = map(col.c, 0, 100, .025, .175)
       let x3 = x + cos(angle) * r
       let y3 = y + sin(angle) * r
-      stroke(60)
+      p3stroke({l:30, c:0, h:0})
       noFill()
       circle(x, y, r*2)
-      fill(hPalHex[i])
+      p3fill(hPal[i])
       circle(x3, y3, .02)
     })
 }
