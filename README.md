@@ -8,23 +8,23 @@ When initiated, the ColorMaker picks at random:
 - a **base color** from user defined / preset ranges (base color can be forced by user)
 - standard **deviation** for each LCH value from user defined / preset ranges (deviation values can be forced by user)
 
-It then creates colors by:
-- picking a **base Hue** at random from the harmony table
-- offseting the base color Lightness by a random amount from the tones table, to get a a **base lightness**
+It then creates each color by:
+- picking its **base Hue** at random from the harmony table
+- offseting the base color Lightness by a random amount from the tones table, to get its **base lightness**
 - keeping the base color Chroma as **base Chroma**
 - deviating from these base values with a normal random of their respective standard deviations
 
 ## Usage
 - Instantiate with `new ColorMaker(presets)`
 - Generate a new palette with the `newPalette(n)` method, where `n` is an integer number of colors. The class stores colors in a `palette` array in LCH format : `{ l: 100, c: 100, h: 360 }`
-- Replace p5.js `fill()` and `stroke()` methods with `ColorMaker.fill()` and `ColorMaker.stroke()`. Both function take an LCH object as single argument.
+- In your sketch, instead of p5.js `fill()` and `stroke()` methods, use `ColorMaker.fill()` and `ColorMaker.stroke()`. Both functions take an LCH object as single argument.
 
 Example :
 ```js
 const cm = new ColorMaker({});  // empty object will initiate with default settings
-cm.newPalette(7);             // create a new palette with 7 colors
-let palette = cm.palette;   // retrieve palette array
-cm.fill(palette[0]);
+cm.newPalette(7);               // create a new palette with 7 colors
+let palette = cm.palette;       // retrieve palette array
+cm.fill(palette[0]);            // set fill to first color
 circle(200, 200, 100);
 ```
 

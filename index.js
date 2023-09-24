@@ -89,7 +89,7 @@ function draw() {
   drawHueChromaWheel()
 
   // Palette infos at bottom
-  fill('black')
+  cm.fill({l:0,c:0,h:0})
   noStroke()
   let info = ""
   for ([key, val] of Object.entries(infos)) {
