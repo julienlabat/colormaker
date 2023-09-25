@@ -281,7 +281,7 @@ class ColorMaker {
   }
 
   weightedRandomArr(l) {
-    let m = l.reduce((a,v)=>a.concat(new Array(v[1]).fill(v[0])))
+    let m = l.reduce((a,v)=>a.concat(new Array(v[1]).fill(v[0])),[])
     return this.random(m)
   }
 

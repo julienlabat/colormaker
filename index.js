@@ -1,6 +1,6 @@
 // ColorMaker presets (see template in colormaker.js)
 
-const presets = {
+const p = {
   baseRanges: {
     l: [50, 70],
     c: [30, 50]
@@ -28,7 +28,9 @@ function setup() {
   noLoop()
 
   // Initiate ColorMaker
-  cm = new ColorMaker(presets)
+  cm = new ColorMaker(p)
+  // cm = new ColorMaker(presets.pastel)
+
   // Create new palette
   cm.newPalette(numColors)
 

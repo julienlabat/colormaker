@@ -64,6 +64,8 @@ ctx.fillRect(200, 200, 100, 100);
 ColorMaker must be instatiated with a preset object, here's a template with details on each settings.  
 All settings are optional and will override the default settings.
 
+Template:
+
 ```js
 const presets = {
   
@@ -121,6 +123,7 @@ const presets = {
   }
 };
 ```
+You can see examples of presets in [example-presets.js](src/example-presets.js).
 
 ## Alter Colors
 ColorMaker comes with a pretty useful `alterColor(color, args, cycle)` method. It returns a modified copy of any color according to provided arguments :
