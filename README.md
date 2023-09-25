@@ -1,7 +1,10 @@
-# ColorMaker
+# ColorMaker 🌈
 
-Funky color palette generator using LCH color space. Works only with [p5.js](http://p5js.org) for now.
+#### Funky color palette generator using LCH color space. 
 
+ColorMaker is first designed to work effortlessly with [p5.js](https://p5js.org/) but can be used in any JavaScript project that requires versatile color palette generation.
+
+It generates random colors along LCH color space according to several **presets** (hues harmony, tones table, deviation ranges …). Default presets are fine tuned to offer a wide variety of palettes, but the power of this tool resides in the ability to **customize** these presets.
 
 ## How it works
 

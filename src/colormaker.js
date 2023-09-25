@@ -1,5 +1,6 @@
-// TODO : support for alpha value
-// TODO : implement custom harmony support
+// TODO : support for alpha values
+// TODO : implement custom harmonyTable
+// TODO : implement custom tonesTable
 // TODO : implement chroma tables
 
 const harmonyTable = {
