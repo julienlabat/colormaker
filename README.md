@@ -1,7 +1,10 @@
 # ColorMaker
+
 Funky color palette generator using LCH color space. Works only with [p5.js](http://p5js.org) for now.
 
+
 ## How it works
+
 When initiated, the ColorMaker picks at random:
 - a predefined **harmony table** (allowed hue angles)
 - a predefined **tones table** (allowed lightness differentials)
@@ -14,19 +17,44 @@ It then creates each color by:
 - keeping the base color Chroma as **base Chroma**
 - deviating from these base values with a normal random of their respective standard deviations
 
+
 ## Usage
+
+### With p5.js
+
+ColorMaker is designed to work with p5.js with minimum hassle:
 - Instantiate with `new ColorMaker(presets)`
 - Generate a new palette with the `newPalette(n)` method, where `n` is an integer number of colors. The class stores colors in a `palette` array in LCH format : `{ l: 100, c: 100, h: 360 }`
 - In your sketch, instead of p5.js `fill()` and `stroke()` methods, use `ColorMaker.fill()` and `ColorMaker.stroke()`. Both functions take an LCH object as single argument.
 
-Example :
+Example:
 ```js
 const cm = new ColorMaker({});  // empty object will initiate with default settings
 cm.newPalette(7);               // create a new palette with 7 colors
 let palette = cm.palette;       // retrieve palette array
 cm.fill(palette[0]);            // set fill to first color
-circle(200, 200, 100);
+rect(200, 200, 100, 100);
 ```
+
+### Without p5.js
+
+ColorMaker random functions default to p5.js random, if you're not using p5, you need to provide a replacement PRNG. Using ColorMaker without p5.js also allows you to use P3 color space
+- Instantiate with presets and PRNG function eg.: `new ColorMaker({}, () => Math.radom())`
+- Generate a new palette with the `newPalette(n)` method, where `n` is an integer number of colors. The class stores colors in a `palette` array in LCH format : `{ l: 100, c: 100, h: 360 }`
+- Pass colors to Context with lch notation : `lch(100% 100% 360deg / 1)`
+  
+Example:
+```js
+let canvas = document.createElement('canvas');
+let ctx = canvas.getContext('2d');
+
+const cm = new ColorMaker({}, () => Math.random());
+cm.newPalette(7);
+let color = cm.palette[0];
+ctx.fillStyle = `lch(${color.l}% ${color.c}% ${color.h}deg / 1)`;
+ctx.fillRect(200, 200, 100, 100);
+```
+
 
 ## Presets
 ColorMaker must be instatiated with a preset object, here's a template with details on each settings.  

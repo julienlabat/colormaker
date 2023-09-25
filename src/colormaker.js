@@ -1,7 +1,3 @@
-// TODO : add support for p5 in instance mode
-// TODO : make p5 functions optional : 
-//          - random
-//          - randomGaussian
 // TODO : implement custom harmony support
 // TODO : implement chroma tables
 
@@ -112,35 +108,40 @@ const defaultSettings = {
   },
   deviationRanges: {
     l: [6, 12],
-    c: [8, 14]
+    c: [6, 10]
   },
   paletteSize: 7
 }
 
 // Utils ---------------------------------
 const clamp=(n,min,max)=> Math.min(Math.max(n,min),max)
-// Weighted random
-// Returns a random entry from an object of weighted objects : { key: { ... , weight: int }, ... }
-const weightedRandomObj=(o)=>random(Object.values(o).reduce((a,v)=>a.concat(new Array(v.weight).fill(v)),[]))
-// Returns a random value from an array of [value, weight] pairs
-const weightedRandomArr=(l)=>random(l.reduce((a,v)=>a.concat(new Array(v[1]).fill(v[0])),[]))
 
 //--------------------------------------------------------------
 
 class ColorMaker {
 
-  constructor(p) {
+  constructor(p, prng = () => random()) {
+    /**
+    * @param {object} p : presets
+    * @param {function} prng : PRNG function, defaults to p5.js random()
+    */
+
+    this.prng = prng
 
     // Harmony table
-    this.harmonyName = p.harmonyName ? weightedRandomArr(p.harmonyName) : weightedRandomObj(harmonyTable).name
+    this.harmonyName = p.harmonyName ? 
+      this.weightedRandomArr(p.harmonyName) : 
+      this.weightedRandomObj(harmonyTable).name
     this.harmony = harmonyTable[this.harmonyName]
     if (this.harmonyName === 'Tetradic') {
-      let r = random(30, 60)
+      let r = this.random(30, 60)
       harmonyTable.Tetradic.steps = [r, 180 + r, 0, 180]
     }
 
     // Lightness table
-    this.tonesName = p.tonesName ? weightedRandomArr(p.tonesName) : weightedRandomObj(tonesTable).name
+    this.tonesName = p.tonesName ? 
+      this.weightedRandomArr(p.tonesName) : 
+      this.weightedRandomObj(tonesTable).name
     this.tones = tonesTable[this.tonesName].steps
 
     // Ranges for base color random pick
@@ -171,9 +172,9 @@ class ColorMaker {
 
     // Set deviation from deviation ranges
     this.deviation = {
-      l: random(this.deviationRanges.l[0], this.deviationRanges.l[1]),
-      c: random(this.deviationRanges.c[0], this.deviationRanges.c[1]),
-      h: random(this.deviationRanges.h[0], this.deviationRanges.h[1])
+      l: this.random(this.deviationRanges.l[0], this.deviationRanges.l[1]),
+      c: this.random(this.deviationRanges.c[0], this.deviationRanges.c[1]),
+      h: this.random(this.deviationRanges.h[0], this.deviationRanges.h[1])
     }
     // deviation can be forced in presets
     if (p.deviation) {
@@ -190,20 +191,20 @@ class ColorMaker {
   setBase() {
     // Sets a new random base color with same presets
     this.base = {
-      l: random(this.baseRanges.l[0], this.baseRanges.l[1]),
-      c: random(this.baseRanges.c[0], this.baseRanges.c[1]),
-      h: random(this.baseRanges.h[0], this.baseRanges.h[1])
+      l: this.random(this.baseRanges.l[0], this.baseRanges.l[1]),
+      c: this.random(this.baseRanges.c[0], this.baseRanges.c[1]),
+      h: this.random(this.baseRanges.h[0], this.baseRanges.h[1])
     }
   }
 
   newColor() {
     // Returns a new color at random from current instance properties
-    let t = random(this.tones) * 100 // lightness offset from tones map
+    let t = this.random(this.tones) * 100 // lightness offset from tones map
     let l = Math.abs(this.base.l - t)
     return {
-      l: clamp(randomGaussian(l, this.deviation.l), 0, 100),
-      c: clamp(randomGaussian(this.base.c, this.deviation.c), 0, 100),
-      h: abs(randomGaussian(this.base.h + random(this.harmony.steps), this.deviation.h))%360
+      l: clamp(this.randomGaussian(l, this.deviation.l), 0, 100),
+      c: clamp(this.randomGaussian(this.base.c, this.deviation.c), 0, 100),
+      h: Math.abs(this.randomGaussian(this.base.h + this.random(this.harmony.steps), this.deviation.h))%360
     }
   }
 
@@ -232,14 +233,44 @@ class ColorMaker {
     return lch
   }
 
+  // P5 replacement methods for fill and stroke ------------------
+  
   fill(col) {
     fill(0)
-    drawingContext.fillStyle = `lch(${col.l} ${col.c} ${col.h} / 1)`
+    drawingContext.fillStyle = `lch(${col.l}% ${col.c}% ${col.h}deg / 1)`
   }
   
   stroke(col) {
     stroke(0)
-    drawingContext.strokeStyle = `lch(${col.l} ${col.c} ${col.h} / 1)`
+    drawingContext.strokeStyle = `lch(${col.l}% ${col.c}% ${col.h}deg / 1)`
+  }
+
+  // Random functions --------------------------------------------
+
+  random(min, max) {
+    // if min is an array : return random value from array
+    // else return random number between min and max
+    return Array.isArray(min) ? 
+      min[~~(this.prng() * min.length)] : 
+      this.prng() * (max-min) + min
+  }
+
+  randomGaussian(mean, sd) {
+    const u = 1 - this.prng()
+    const v = this.prng()
+    const z = Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v )
+    // console.log(z * sd + mean)
+    return z * sd + mean
+  }
+
+  weightedRandomObj(o) {
+    let l = Object.values(o).reduce((a,v)=>a.concat(new Array(v.weight).fill(v)),[])
+    return this.random(l)
+  }
+
+  weightedRandomArr(l) {
+    let m = l.reduce((a,v)=>a.concat(new Array(v[1]).fill(v[0])))
+    return this.random(m)
   }
 
 }

@@ -4,7 +4,7 @@
 const presets = {
   baseRanges: {
     l: [50, 70],
-    c: [30, 50]
+    c: [25, 35]
   }
 }
 
@@ -20,10 +20,9 @@ let S, cm, narrow, infos,
     cPal = [],
     hPal = []
 
-
 function setup() {
 
-  randomSeed(1344324855)
+  // randomSeed(1344324855)
   
   S = min(windowHeight / R, windowWidth)
   createCanvas(S, S*R)
@@ -175,4 +174,10 @@ function drawWheel(type) {
     cm.fill(col)
     circle(x3, y3, .02)
   })
+}
+
+function windowResized() {
+  S = min(windowHeight / R, windowWidth)
+  resizeCanvas(S, S*R)
+  draw()
 }
