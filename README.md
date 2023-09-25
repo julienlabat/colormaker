@@ -24,8 +24,8 @@ It then creates each color by:
 
 ColorMaker is designed to work with p5.js with minimum hassle:
 - Instantiate with `new ColorMaker(presets)`
-- Generate a new palette with the `newPalette(n)` method, where `n` is an integer number of colors. The class stores colors in a `palette` array in LCH format : `{ l: 100, c: 100, h: 360 }`
-- In your sketch, instead of p5.js `fill()` and `stroke()` methods, use `ColorMaker.fill()` and `ColorMaker.stroke()`. Both functions take an LCH object as single argument.
+- Generate a new palette with the `newPalette(n)` method, where `n` is an integer number of colors. The class stores colors in a `palette` array in LCH format : `{ l: 100, c: 131, h: 360 }`
+- In your sketch, instead of p5.js `background()`, `fill()` and `stroke()` methods, use `ColorMaker.background()`, `ColorMaker.fill()` and `ColorMaker.stroke()`. Both functions take an LCH object as single argument.
 
 Example:
 ```js
@@ -40,8 +40,8 @@ rect(200, 200, 100, 100);
 
 ColorMaker random functions default to p5.js random, if you're not using p5, you need to provide a replacement PRNG. Using ColorMaker without p5.js also allows you to use P3 color space
 - Instantiate with presets and PRNG function eg.: `new ColorMaker({}, () => Math.radom())`
-- Generate a new palette with the `newPalette(n)` method, where `n` is an integer number of colors. The class stores colors in a `palette` array in LCH format : `{ l: 100, c: 100, h: 360 }`
-- Pass colors to Context with lch notation : `lch(100% 100% 360deg / 1)`
+- Generate a new palette with the `newPalette(n)` method, where `n` is an integer number of colors. The class stores colors in a `palette` array in LCH format : `{ l: 100, c: 131, h: 360 }`
+- Pass colors to Context with lch notation : `lch(100 100 360deg / 1)`
   
 Example:
 ```js
@@ -51,7 +51,7 @@ let ctx = canvas.getContext('2d');
 const cm = new ColorMaker({}, () => Math.random());
 cm.newPalette(7);
 let color = cm.palette[0];
-ctx.fillStyle = `lch(${color.l}% ${color.c}% ${color.h}deg / 1)`;
+ctx.fillStyle = `lch(${color.l} ${color.c} ${color.h} / 1)`;
 ctx.fillRect(200, 200, 100, 100);
 ```
 
@@ -116,4 +116,27 @@ const presets = {
     h: 0
   }
 };
+```
+
+## Alter Colors
+ColorMaker comes with a pretty useful `alterColor(color, args, cycle)` method. It can modify any color according to provided arguments :
+- `color` : object with lch values eg.: `{ l:100, c:131, h:360 }`
+- `args` : object with the following (optional) keys : `l`, `c`, `h`, `a`, `L`, `C`, `H`, `A` with number values.
+  - lowercase letters add the value to the original value
+  - uppercase letters set to value
+- `cycle`: boolean: if true, overflowing values will cycle to opposite (eg. with max 100 : 90 + 20 = 10), if false, values will be clamped (eg. with max 100: 90 + 20 = 100)
+
+Example: 
+```js
+let color = {
+  l: 20,
+  c: 40,
+  h: 350
+}
+let color2 = cm.alterColor(color, {
+  l: 10,
+  C: 50,
+  h: -40
+})
+// color2 : { l: 30, c: 50, h: 310 }
 ```

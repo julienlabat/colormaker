@@ -1,3 +1,4 @@
+// TODO : support for alpha value
 // TODO : implement custom harmony support
 // TODO : implement chroma tables
 
@@ -203,7 +204,7 @@ class ColorMaker {
     let l = Math.abs(this.base.l - t)
     return {
       l: clamp(this.randomGaussian(l, this.deviation.l), 0, 100),
-      c: clamp(this.randomGaussian(this.base.c, this.deviation.c), 0, 100),
+      c: clamp(this.randomGaussian(this.base.c, this.deviation.c), 0, 131),
       h: Math.abs(this.randomGaussian(this.base.h + this.random(this.harmony.steps), this.deviation.h))%360
     }
   }
@@ -216,14 +217,14 @@ class ColorMaker {
     }
   }
 
-  alterColor(lch, args, dontCycle=false) {
+  alterColor(lch, args, cycle=true) {
     // Takes in a LCH color object
     // Returns a modified color according to args (in lch format)
     // lowercase arg adds to value : { l: 20 } will add 20 to original l
     // uppercase arg sets a new value : { L: 20 } will set l to 20
-    if (args.l) lch.l = dontCycle ? Math.abs(args.l + lch.l) : Math.abs(100 + args.l + lch.l) % 100
-    if (args.c) lch.c = dontCycle ? Math.abs(args.c + lch.c) : Math.abs(100 + args.c + lch.c) % 100
-    if (args.h) lch.h = dontCycle ? Math.abs(args.h + lch.h) : Math.abs(360 + args.h + lch.h) % 360
+    if (args.l) lch.l = cycle ? Math.abs(100 + args.l + lch.l) % 100 : clamp(Math.abs(args.l + lch.l), 0, 100)
+    if (args.c) lch.c = cycle ? Math.abs(100 + args.c + lch.c) % 100 : clamp(Math.abs(args.c + lch.c), 0, 131)
+    if (args.h) lch.h = cycle ? Math.abs(360 + args.h + lch.h) % 360 : clamp(Math.abs(args.h + lch.h), 0, 360)
     if (args.a) lch.alpha = Math.abs(args.a + lch.a) % 1
     if (args.L) lch.l = args.L
     if (args.C) lch.c = args.C
@@ -233,16 +234,23 @@ class ColorMaker {
     return lch
   }
 
-  // P5 replacement methods for fill and stroke ------------------
+  // P5 replacement methods ------------------------------------
   
+  background(col) {
+    noStroke()
+    fill(0)
+    drawingContext.fillStyle = `lch(${col.l} ${col.c} ${col.h} / 1)`
+    rect(0, 0, width, height)
+  }
+
   fill(col) {
     fill(0)
-    drawingContext.fillStyle = `lch(${col.l}% ${col.c}% ${col.h}deg / 1)`
+    drawingContext.fillStyle = `lch(${col.l} ${col.c} ${col.h} / 1)`
   }
   
   stroke(col) {
     stroke(0)
-    drawingContext.strokeStyle = `lch(${col.l}% ${col.c}% ${col.h}deg / 1)`
+    drawingContext.strokeStyle = `lch(${col.l} ${col.c} ${col.h} / 1)`
   }
 
   // Random functions --------------------------------------------

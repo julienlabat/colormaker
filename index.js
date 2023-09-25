@@ -4,7 +4,7 @@
 const presets = {
   baseRanges: {
     l: [50, 70],
-    c: [25, 35]
+    c: [30, 50]
   }
 }
 
@@ -50,7 +50,7 @@ function setup() {
 
 function draw() {
 
-  background(250)
+  cm.background({ l: 95, c:0, h:0 })
   noStroke()
   
   push()
@@ -148,7 +148,7 @@ function drawWheel(type) {
     for (let j = 0; j < steps + 1; j++) {
       let r = (.2 / steps) * j
       let col = isChroma ? 
-        { l: 70, c: map(j, 0, steps, 0, 100), h: degrees(i) } :
+        { l: 70, c: map(j, 0, steps, 0, 131), h: degrees(i) } :
         { l: map(j, 0, steps, 0, 100), c: 90, h: degrees(i) }
       cm.stroke(col)
       let x2 = x + cos(i) * r
@@ -160,14 +160,18 @@ function drawWheel(type) {
   }
   // Draw concentric circles
   hPal.forEach(col => {
-    let r = map(col.l, 0, 100, .025, .175)
+    let r = isChroma ? 
+      map(col.l, 0, 131, .025, .175) :
+      map(col.l, 0, 100, .025, .175)
     cm.stroke({l:30, c:0, h:0})
     noFill()
     circle(x, y, r*2)
   })
   // Draw points
   hPal.forEach(col => {
-    let r = map(col.l, 0, 100, .025, .175)
+    let r = isChroma ? 
+      map(col.l, 0, 131, .025, .175) :
+      map(col.l, 0, 100, .025, .175)
     let angle = radians(col.h)
     let x3 = x + cos(angle) * r
     let y3 = y + sin(angle) * r
