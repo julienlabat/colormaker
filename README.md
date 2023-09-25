@@ -1,6 +1,6 @@
 # ColorMaker 🌈
 
-#### Funky color palette generator using LCH color space. 
+**Funky color palette generator using [LCH color space](https://lea.verou.me/blog/2020/04/lch-colors-in-css-what-why-and-how/).**
 
 ColorMaker is first designed to work effortlessly with [p5.js](https://p5js.org/) but can be used in any JavaScript project that requires versatile color palette generation.
 
@@ -11,14 +11,14 @@ It generates random colors along LCH color space according to several **presets*
 When initiated, the ColorMaker picks at random:
 - a predefined **harmony table** (allowed hue angles)
 - a predefined **tones table** (allowed lightness differentials)
-- a **base color** from user defined / preset ranges (base color can be forced by user)
-- standard **deviation** for each LCH value from user defined / preset ranges (deviation values can be forced by user)
+- a **base color** from user defined / preset **ranges** (base color can also be forced by user)
+- standard **deviation** for each LCH value from user defined / preset **ranges** (deviation values can be forced by user)
 
 It then creates each color by:
 - picking its **base Hue** at random from the harmony table
 - offseting the base color Lightness by a random amount from the tones table, to get its **base lightness**
 - keeping the base color Chroma as **base Chroma**
-- deviating from these base values with a normal random of their respective standard deviations
+- deviating from these base values with a normal random of their respective **standard deviations**
 
 
 ## Usage
@@ -35,16 +35,17 @@ Example:
 const cm = new ColorMaker({});  // empty object will initiate with default settings
 cm.newPalette(7);               // create a new palette with 7 colors
 let palette = cm.palette;       // retrieve palette array
+
 cm.fill(palette[0]);            // set fill to first color
 rect(200, 200, 100, 100);
 ```
 
 ### Without p5.js
 
-ColorMaker random functions default to p5.js random, if you're not using p5, you need to provide a replacement PRNG. Using ColorMaker without p5.js also allows you to use P3 color space
-- Instantiate with presets and PRNG function eg.: `new ColorMaker({}, () => Math.radom())`
+ColorMaker random functions default to p5.js random, if you're not using p5, you need to provide a replacement PRNG. Using ColorMaker without p5.js also allows you to use P3 color space.
+- Instantiate with presets and PRNG function eg.: `new ColorMaker({}, () => Math.random())`
 - Generate a new palette with the `newPalette(n)` method, where `n` is an integer number of colors. The class stores colors in a `palette` array in LCH format : `{ l: 100, c: 131, h: 360 }`
-- To pass colors to Context with CSS LCH notation, use the `lchString()` method
+- To pass colors to Context or CSS properties, use the `lchString()` method
   
 Example:
 ```js
@@ -53,16 +54,21 @@ let ctx = canvas.getContext('2d');
 
 const cm = new ColorMaker({}, () => Math.random());
 cm.newPalette(7);
+
 let color = cm.palette[0];
 let lch = lchString(color);
-ctx.fillStyle = `lch(${color.l} ${color.c} ${color.h} / ${color.a || 100}%)`;
+
+ctx.fillStyle = lch;
 ctx.fillRect(200, 200, 100, 100);
 ```
 
 
 ## Presets
-ColorMaker must be instatiated with a preset object, here's a template with details on each settings.  
+ColorMaker must be instatiated with a `preset`` object, here's a template with details on each settings.  
+  
 All settings are optional and will override the default settings.
+
+Pass an empty object `{}` to the constructor to use default presets (see above).
 
 Template:
 
@@ -97,21 +103,21 @@ const presets = {
   // Ranges for base color random pick
   baseRanges: {
     l: [0, 100],
-    c: [0, 100],
+    c: [0, 131],
     h: [0, 360]
   },
   
   // Force base color 
   base: {
-    l: 70,
-    c: 50,
-    h: 350
+    l: 100,
+    c: 131, // in LCH color space chroma maxes to ~131
+    h: 360
   },
 
   // Force deviation ranges
   deviationRanges: {
-    l: [0, 100], // will not affect tones map
-    c: [0, 100],
+    l: [0, 100],
+    c: [0, 131],
     h: [0, 100], // overrides harmony's presets
   },
   
