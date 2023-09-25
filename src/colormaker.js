@@ -227,11 +227,13 @@ class ColorMaker {
     if (args.l) lch.l = cycle ? Math.abs(100 + args.l + lch.l) % 100 : clamp(args.l + lch.l, 0, 100)
     if (args.c) lch.c = cycle ? Math.abs(131 + args.c + lch.c) % 131 : clamp(args.c + lch.c, 0, 131)
     if (args.h) lch.h = cycle ? Math.abs(360 + args.h + lch.h) % 360 : clamp(args.h + lch.h, 0, 360)
-    if (args.a) lch.a = lch.a ? Math.abs(100 + args.a + lch.a) % 100 : Math.abs(100 + args.a + 1) % 100
+    if (args.a) lch.a = lch.a ? clamp(args.a + lch.a, 0, 100) : clamp(args.a + 100, 0, 100)
     if (args.L) lch.l = args.L
     if (args.C) lch.c = args.C
     if (args.H) lch.h = args.H
-    if (args.A) lch['a'] = args.A
+    if (args.A) lch.a = args.A
+    
+    if (lch.a === 0) console.warn(`Alpha value for ${JSON.stringify(lch)} shouldn't result to 0, it has been reset to 100%`)
     
     return lch
   }

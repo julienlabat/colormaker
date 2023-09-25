@@ -1,4 +1,3 @@
-
 // ColorMaker presets (see template in colormaker.js)
 
 const presets = {
@@ -22,7 +21,7 @@ let S, cm, narrow, infos,
 
 function setup() {
 
-  randomSeed(1344324855)
+  // randomSeed(1344324855)
   
   S = min(windowHeight / R, windowWidth)
   createCanvas(S, S*R)
@@ -61,7 +60,7 @@ function draw() {
       h = .1
   for (let i = 0; i < numColors; i++) {
     let x = M + i * w,
-    lch = cm.alterColor(cm.palette[i], { A:0 })
+    lch = cm.palette[i]
     // Big blocks
     cm.fill(lch)
     rect(x, M, w, h)

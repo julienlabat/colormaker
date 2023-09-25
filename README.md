@@ -145,4 +145,4 @@ let color2 = cm.alterColor(color, {
 })
 // color2 : { l: 30, c: 50, h: 310, a: 50 }
 ```
-It's this method you have to use if you need colors to have an Alpha value of less than 100%. Alpha must not be 0.
+You can use this method if you need colors to have an Alpha value of less than 100%. Final alpha value must not be 0%.
