@@ -42,7 +42,7 @@ rect(200, 200, 100, 100);
 
 ### Without p5.js
 
-ColorMaker random functions default to p5.js random, if you're not using p5, you need to provide a replacement PRNG. Using ColorMaker without p5.js also allows you to use P3 color space.
+ColorMaker random functions default to p5.js random, if you're not using p5, you need to provide a replacement PRNG. Using ColorMaker without p5.js also allows you to benefit of the full range of P3 color space.
 - Instantiate with presets and PRNG function eg.: `new ColorMaker({}, () => Math.random())`
 - Generate a new palette with the `newPalette(n)` method, where `n` is an integer number of colors. The class stores colors in a `palette` array in LCH format : `{ l: 100, c: 131, h: 360 }`
 - To pass colors to Context or CSS properties, use the `lchString()` method
