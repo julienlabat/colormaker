@@ -4,7 +4,7 @@
 
 ColorMaker is first designed to work effortlessly with [p5.js](https://p5js.org/) but can be used in any JavaScript project that requires versatile color palette generation.
 
-It generates random colors along LCH color space according to several **presets** (hues harmony, tones table, deviation ranges …). Default presets are fine tuned to offer a wide variety of palettes, but the power of this tool resides in the ability to **customize** these presets.
+It generates random colors along LCH color space according to several **presets** (hues harmony, tones table, deviation ranges …). Default presets are fine tuned to produce a wide variety of palettes, but the power of this tool resides in the ability to **customize** these presets.
 
 ## How it works
 
@@ -44,7 +44,7 @@ rect(200, 200, 100, 100);
 ColorMaker random functions default to p5.js random, if you're not using p5, you need to provide a replacement PRNG. Using ColorMaker without p5.js also allows you to use P3 color space
 - Instantiate with presets and PRNG function eg.: `new ColorMaker({}, () => Math.radom())`
 - Generate a new palette with the `newPalette(n)` method, where `n` is an integer number of colors. The class stores colors in a `palette` array in LCH format : `{ l: 100, c: 131, h: 360 }`
-- Pass colors to Context with lch notation : `lch(100 100 360deg / 1)`
+- To pass colors to Context with CSS LCH notation, use the `lchString()` method
   
 Example:
 ```js
@@ -54,7 +54,8 @@ let ctx = canvas.getContext('2d');
 const cm = new ColorMaker({}, () => Math.random());
 cm.newPalette(7);
 let color = cm.palette[0];
-ctx.fillStyle = `lch(${color.l} ${color.c} ${color.h} / 1)`;
+let lch = lchString(color);
+ctx.fillStyle = `lch(${color.l} ${color.c} ${color.h} / ${color.a || 100}%)`;
 ctx.fillRect(200, 200, 100, 100);
 ```
 
@@ -122,7 +123,7 @@ const presets = {
 ```
 
 ## Alter Colors
-ColorMaker comes with a pretty useful `alterColor(color, args, cycle)` method. It can modify any color according to provided arguments :
+ColorMaker comes with a pretty useful `alterColor(color, args, cycle)` method. It returns a modified copy of any color according to provided arguments :
 - `color` : object with lch values eg.: `{ l:100, c:131, h:360 }`
 - `args` : object with the following (optional) keys : `l`, `c`, `h`, `a`, `L`, `C`, `H`, `A` with number values.
   - lowercase letters add the value to the original value
@@ -139,7 +140,9 @@ let color = {
 let color2 = cm.alterColor(color, {
   l: 10,
   C: 50,
-  h: -40
+  h: -40,
+  a: -50
 })
-// color2 : { l: 30, c: 50, h: 310 }
+// color2 : { l: 30, c: 50, h: 310, a: 50 }
 ```
+It's this method you have to use if you need colors to have an Alpha value of less than 100%. Alpha must not be 0.

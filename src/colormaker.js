@@ -1,7 +1,6 @@
-// TODO : support for alpha values
 // TODO : implement custom harmonyTable
 // TODO : implement custom tonesTable
-// TODO : implement chroma tables
+// TODO : implement chroma tables + custom chromaTable
 
 const harmonyTable = {
   Uniform: {
@@ -158,9 +157,9 @@ class ColorMaker {
     this.base = {}
     this.setBase()
     if (p.base) {
-      if (p.base.l) this.base.l = p.base.l
-      if (p.base.c) this.base.c = p.base.c
-      if (p.base.h) this.base.h = p.base.h
+      if (p.base.l !== undefined) this.base.l = p.base.l
+      if (p.base.c !== undefined) this.base.c = p.base.c
+      if (p.base.h !== undefined) this.base.h = p.base.h
     }
 
     // Ranges for randomizing deviation
@@ -180,9 +179,9 @@ class ColorMaker {
     }
     // deviation can be forced in presets
     if (p.deviation) {
-      if (p.deviation.l) this.deviation.l = p.deviation.l
-      if (p.deviation.c) this.deviation.c = p.deviation.c
-      if (p.deviation.h) this.deviation.h = p.deviation.h
+      if (p.deviation.l !== undefined) this.deviation.l = p.deviation.l
+      if (p.deviation.c !== undefined) this.deviation.c = p.deviation.c
+      if (p.deviation.h !== undefined) this.deviation.h = p.deviation.h
     }
 
     // Palette storage : arrays of strings, initiated with base color
@@ -218,19 +217,21 @@ class ColorMaker {
     }
   }
 
-  alterColor(lch, args, cycle=true) {
+  alterColor(col, args, cycle=true) {
     // Takes in a LCH color object
-    // Returns a modified color according to args (in lch format)
+    // Returns a modified coy of col according to args (in lch format)
     // lowercase arg adds to value : { l: 20 } will add 20 to original l
     // uppercase arg sets a new value : { L: 20 } will set l to 20
-    if (args.l) lch.l = cycle ? Math.abs(100 + args.l + lch.l) % 100 : clamp(Math.abs(args.l + lch.l), 0, 100)
-    if (args.c) lch.c = cycle ? Math.abs(100 + args.c + lch.c) % 100 : clamp(Math.abs(args.c + lch.c), 0, 131)
-    if (args.h) lch.h = cycle ? Math.abs(360 + args.h + lch.h) % 360 : clamp(Math.abs(args.h + lch.h), 0, 360)
-    if (args.a) lch.alpha = Math.abs(args.a + lch.a) % 1
+    // Alpha (a, A) values must not result to 0
+    let lch = {...col}
+    if (args.l) lch.l = cycle ? Math.abs(100 + args.l + lch.l) % 100 : clamp(args.l + lch.l, 0, 100)
+    if (args.c) lch.c = cycle ? Math.abs(131 + args.c + lch.c) % 131 : clamp(args.c + lch.c, 0, 131)
+    if (args.h) lch.h = cycle ? Math.abs(360 + args.h + lch.h) % 360 : clamp(args.h + lch.h, 0, 360)
+    if (args.a) lch.a = lch.a ? Math.abs(100 + args.a + lch.a) % 100 : Math.abs(100 + args.a + 1) % 100
     if (args.L) lch.l = args.L
     if (args.C) lch.c = args.C
     if (args.H) lch.h = args.H
-    if (args.A) lch.alpha = args.A
+    if (args.A) lch['a'] = args.A
     
     return lch
   }
@@ -240,18 +241,18 @@ class ColorMaker {
   background(col) {
     noStroke()
     fill(0)
-    drawingContext.fillStyle = `lch(${col.l} ${col.c} ${col.h} / 1)`
+    drawingContext.fillStyle = `lch(${col.l} ${col.c} ${col.h} / ${col.a || 100}%)`
     rect(0, 0, width, height)
   }
 
   fill(col) {
     fill(0)
-    drawingContext.fillStyle = `lch(${col.l} ${col.c} ${col.h} / 1)`
+    drawingContext.fillStyle = `lch(${col.l} ${col.c} ${col.h} / ${col.a || 100}%)`
   }
   
   stroke(col) {
     stroke(0)
-    drawingContext.strokeStyle = `lch(${col.l} ${col.c} ${col.h} / 1)`
+    drawingContext.strokeStyle = `lch(${col.l} ${col.c} ${col.h} / ${col.a || 100}%)`
   }
 
   // Random functions --------------------------------------------
