@@ -138,6 +138,20 @@ console.log(cm.palette[0].toString())
 // logs "lch(100 131 360 / 100%)"
 ```
 
+### Manual colors
+In order to manipulate arbitrary colors, you need to use the `color()` method. This will return a copy of your color object including a `toString()` method.
+```js
+let col = cm.color({
+  l: 100,
+  c: 131,
+  h: 360
+})
+cm.fill(col)
+
+console.log(col.toString())
+// logs "lch(100 131 360 / 100%)"
+```
+
 ## Alter Colors
 ColorMaker comes with a pretty useful `alterColor(color, args, cycle)` method. It returns a modified copy of any color according to provided arguments :
 - `color` : object with lch values eg.: `{ l:100, c:131, h:360 }`

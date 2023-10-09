@@ -211,6 +211,16 @@ class ColorMaker {
     }
   }
 
+  color(lch) {
+    // Takes in an lch object and returns a copy with toString method
+    return {
+      l: lch.l,
+      c: lch.c,
+      h: lch.h,
+      toString : function() { return `lch(${this.l} ${this.c} ${this.h} / ${this.a || 100}%)` }
+    }
+  }
+
   newPalette(len=defaultSettings.paletteSize) {
     // Fills the palette with a given number of colors
     for (let i = 0; i < len-1; i++) {
@@ -263,10 +273,10 @@ class ColorMaker {
     if (G!==null) {
       let ctx = G.canvas.getContext("2d")
       G.fill(0)
-      ctx.strokeStyle = col.toString()
+      ctx.fillStyle = col.toString()
     } else {
       fill(0)
-      drawingContext.strokeStyle = col.toString()
+      drawingContext.fillStyle = col.toString()
     }
   }
   

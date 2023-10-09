@@ -51,7 +51,7 @@ function setup() {
 
 function draw() {
 
-  cm.background({ l: 95, c:0, h:0 })
+  cm.background(cm.color({ l: 95, c:0, h:0 }))
   noStroke()
   
   push()
@@ -77,9 +77,9 @@ function draw() {
 
     // Sorted by Lightness
     drawSortedPalette(i, x, w, h, 'l', lPal, 1)
-    // Sorted by Chroma
+    // // Sorted by Chroma
     drawSortedPalette(i, x, w, h, 'c', cPal, 2)
-    // Sorted by Hue
+    // // Sorted by Hue
     drawSortedPalette(i, x, w, h, 'h', hPal, 3)
 
   }
@@ -89,7 +89,7 @@ function draw() {
   drawWheel('chroma')
 
   // Palette infos at bottom
-  cm.fill({ l: 0, c: 0, h: 0 })
+  cm.fill(cm.color({ l: 0, c: 0, h: 0 }))
   noStroke()
   let info = ""
   for ([key, val] of Object.entries(infos)) {
@@ -104,11 +104,11 @@ function draw() {
 
 function getTextCol(colL) {
   // Returns a grey color with opposite lightness to colL : int
-  return {
+  return cm.color({
     l: (colL + 50) % 100,
     c: 0,
     h: 0
-  }
+  })
 }
 
 function sortPal(val) { 
@@ -149,8 +149,8 @@ function drawWheel(type) {
     for (let j = 0; j < steps + 1; j++) {
       let r = (.2 / steps) * j
       let col = isChroma ? 
-        { l: 70, c: map(j, 0, steps, 0, 131), h: degrees(i) } :
-        { l: map(j, 0, steps, 0, 100), c: 90, h: degrees(i) }
+        cm.color({ l: 70, c: map(j, 0, steps, 0, 131), h: degrees(i) }) :
+        cm.color({ l: map(j, 0, steps, 0, 100), c: 90, h: degrees(i) })
       cm.stroke(col)
       let x2 = x + cos(i) * r
       let y2 = y + sin(i) * r
@@ -164,7 +164,7 @@ function drawWheel(type) {
     let r = isChroma ? 
       map(col.l, 0, 131, .025, .175) :
       map(col.l, 0, 100, .025, .175)
-    cm.stroke({l:30, c:0, h:0})
+    cm.stroke(cm.color({l:30, c:0, h:0}))
     noFill()
     circle(x, y, r*2)
   })
