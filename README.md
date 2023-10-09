@@ -4,7 +4,7 @@
 
 ColorMaker is first designed to work effortlessly with [p5.js](https://p5js.org/) but can be used in any JavaScript project that requires versatile color palette generation.
 
-It generates random colors along LCH color space according to several **presets** (hues harmony, tones table, deviation ranges …). Default presets are fine tuned to produce a wide variety of palettes, but the power of this tool resides in the ability to **customize** these presets.
+It generates random colors within LCH color space according to several **presets** (hues harmony, tones table, deviation ranges …). Default presets are fine tuned to produce a wide variety of palettes, but the power of this tool resides in the ability to **customize** these presets.
 
 ## How it works
 
@@ -130,6 +130,13 @@ const presets = {
 };
 ```
 You can see examples of presets in [example-presets.js](src/example-presets.js).
+
+## Get CSS color string
+Colors stored in ColorMaker have a `toString()` method that returns a formatted string for CSS lch color :
+```js
+console.log(cm.palette[0].toString())
+// logs "lch(100 131 360 / 100%)"
+```
 
 ## Alter Colors
 ColorMaker comes with a pretty useful `alterColor(color, args, cycle)` method. It returns a modified copy of any color according to provided arguments :

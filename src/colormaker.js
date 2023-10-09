@@ -194,7 +194,8 @@ class ColorMaker {
     this.base = {
       l: this.random(this.baseRanges.l[0], this.baseRanges.l[1]),
       c: this.random(this.baseRanges.c[0], this.baseRanges.c[1]),
-      h: this.random(this.baseRanges.h[0], this.baseRanges.h[1])
+      h: this.random(this.baseRanges.h[0], this.baseRanges.h[1]),
+      toString : function() { return `lch(${this.l} ${this.c} ${this.h} / ${this.a || 100}%)` }
     }
   }
 
@@ -205,7 +206,8 @@ class ColorMaker {
     return {
       l: clamp(this.randomGaussian(l, this.deviation.l), 0, 100),
       c: clamp(this.randomGaussian(this.base.c, this.deviation.c), 0, 131),
-      h: Math.abs(this.randomGaussian(this.base.h + this.random(this.harmony.steps), this.deviation.h))%360
+      h: Math.abs(this.randomGaussian(this.base.h + this.random(this.harmony.steps), this.deviation.h))%360,
+      toString : function() { return `lch(${this.l} ${this.c} ${this.h} / ${this.a || 100}%)` }
     }
   }
 
