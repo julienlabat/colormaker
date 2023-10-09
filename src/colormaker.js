@@ -240,21 +240,43 @@ class ColorMaker {
 
   // P5 replacement methods ------------------------------------
   
-  background(col) {
-    noStroke()
-    fill(0)
-    drawingContext.fillStyle = `lch(${col.l} ${col.c} ${col.h} / ${col.a || 100}%)`
-    rect(0, 0, width, height)
+  background(col, G=null) {
+    // col : LCH object
+    // G : p5.Graphcis object
+    if (G!==null) {
+      let ctx = G.canvas.getContext("2d")
+      G.noStroke()
+      G.fill(0)
+      ctx.fillStyle = col.toString()
+      G.rect(0, 0, width, height)
+    } else {
+      noStroke()
+      fill(0)
+      drawingContext.fillStyle = col.toString()
+      rect(0, 0, width, height)
+    }
   }
 
-  fill(col) {
-    fill(0)
-    drawingContext.fillStyle = `lch(${col.l} ${col.c} ${col.h} / ${col.a || 100}%)`
+  fill(col, G=null) {
+    if (G!==null) {
+      let ctx = G.canvas.getContext("2d")
+      G.fill(0)
+      ctx.strokeStyle = col.toString()
+    } else {
+      fill(0)
+      drawingContext.strokeStyle = col.toString()
+    }
   }
   
-  stroke(col) {
-    stroke(0)
-    drawingContext.strokeStyle = `lch(${col.l} ${col.c} ${col.h} / ${col.a || 100}%)`
+  stroke(col, G=null) {
+    if (G!==null) {
+      let ctx = G.canvas.getContext("2d")
+      G.stroke(0)
+      ctx.strokeStyle = col.toString()
+    } else {
+      stroke(0)
+      drawingContext.strokeStyle = col.toString()
+    }
   }
 
   // Random functions --------------------------------------------
